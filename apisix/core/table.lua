@@ -18,7 +18,7 @@ local newproxy     = newproxy
 local getmetatable = getmetatable
 local setmetatable = setmetatable
 local select       = select
-local new_tab      = require("table.new")
+local new_tab      = require("table.new") -- openresty/luajit2新增table api https://github.com/openresty/luajit2/blob/v2.1-agentzh/src/lib_table.c
 local nkeys        = require("table.nkeys")
 local ipairs       = ipairs
 local pairs        = pairs
@@ -59,7 +59,7 @@ function _M.set(tab, ...)
     end
 end
 
-
+-- 逐层读取，比如table.try_read_attr(conf, a, b)是读取conf[a][b]
 function _M.try_read_attr(tab, ...)
     local count = select('#', ...)
 
