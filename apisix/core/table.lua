@@ -34,7 +34,7 @@ local _M = {
     insert  = table.insert,
     concat  = table.concat,
     sort    = table.sort,
-    clone   = require("table.clone"),
+    clone   = require("table.clone"), --clone只是浅拷贝，只处理第一层元素
     isarray = require("table.isarray"),
 }
 
@@ -100,16 +100,16 @@ local deepcopy
 do
     local function _deepcopy(orig, copied)
         -- prevent infinite loop when a field refers its parent
-        copied[orig] = true
+        copied[orig] = true  -- 是否被拷贝的标记
         -- If the array-like table contains nil in the middle,
         -- the len might be smaller than the expected.
         -- But it doesn't affect the correctness.
         local len = #orig
         local copy = new_tab(len, nkeys(orig) - len)
         for orig_key, orig_value in pairs(orig) do
-            if type(orig_value) == "table" and not copied[orig_value] then
+            if type(orig_value) == "table" and not copied[orig_value] then -- 处理元素是table类型的情况
                 copy[orig_key] = _deepcopy(orig_value, copied)
-            else
+            else -- string、nil、number etc
                 copy[orig_key] = orig_value
             end
         end
@@ -118,7 +118,7 @@ do
     end
 
 
-    local copied_recorder = {}
+    local copied_recorder = {} -- 标记数组
 
     function deepcopy(orig)
         local orig_type = type(orig)
@@ -127,11 +127,11 @@ do
         end
 
         local res = _deepcopy(orig, copied_recorder)
-        _M.clear(copied_recorder)
+        _M.clear(copied_recorder) -- 销毁标记数组
         return res
     end
 end
-_M.deepcopy = deepcopy
+_M.deepcopy = deepcopy -- 深拷贝table函数，可以参考https://blog.csdn.net/oushaojun2/article/details/78599514
 
 
 local ngx_null = ngx.null
@@ -140,7 +140,7 @@ local function merge(origin, extend)
         if type(v) == "table" then
             if type(origin[k] or false) == "table" then
                 if _M.nkeys(origin[k]) ~= #origin[k] then
-                    merge(origin[k] or {}, extend[k] or {})
+                    merge(origin[k] or {}, extend[k] or {}) -- 递归的合并子table
                 else
                     origin[k] = v
                 end
@@ -158,7 +158,7 @@ local function merge(origin, extend)
 end
 _M.merge = merge
 
-
+-- 将conf根据sub_path（string）追加到node_value（table）中
 local function patch(node_value, sub_path, conf)
     local sub_value = node_value
     local sub_paths = ngx_re.split(sub_path, "/")
