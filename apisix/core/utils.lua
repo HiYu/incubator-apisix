@@ -85,7 +85,7 @@ end
 
 local function dns_parse(domain, selector)
     if dns_resolvers ~= current_inited_resolvers then
-        local local_conf = config_local.local_conf()
+        local local_conf = config_local.local_conf() -- 从yaml中读取配置
         local valid = table.try_read_attr(local_conf, "apisix", "dns_resolver_valid")
         local enable_resolv_search_opt = table.try_read_attr(local_conf, "apisix",
                                                              "enable_resolv_search_opt")

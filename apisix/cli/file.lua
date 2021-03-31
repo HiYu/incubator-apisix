@@ -41,7 +41,7 @@ local function is_empty_yaml_line(line)
     return line == '' or str_find(line, '^%s*$') or str_find(line, '^%s*#')
 end
 
-
+-- 判断table是不是数组，为啥不直接使用table.isarray
 local function tab_is_array(t)
     local count = 0
     for k, v in pairs(t) do
@@ -51,11 +51,11 @@ local function tab_is_array(t)
     return #t == count
 end
 
-
+-- 将conf中的环境变量占位符替换成对应的值，如果都替换成功则返回true
 local function resolve_conf_var(conf)
     for key, val in pairs(conf) do
         if type(val) == "table" then
-            local ok, err = resolve_conf_var(val)
+            local ok, err = resolve_conf_var(val) --递归解析conf
             if not ok then
                 return nil, err
             end
@@ -80,7 +80,7 @@ local function resolve_conf_var(conf)
                 err = "failed to handle configuration: " ..
                       "can't find environment variable " .. var
                 return ""
-            end)
+            end) --${{var}}获取环境变量
 
             if err then
                 return nil, err
@@ -111,7 +111,7 @@ local function tinyyaml_type(t)
     end
 end
 
-
+-- 这里不能单纯理解为合并，new_tab优先级最高，只有在new_tab中没有的时候，才用base中的，如果base、new_tab都存在的，new_tab值覆盖base中的值
 local function merge_conf(base, new_tab, ppath)
     ppath = ppath or ""
 
@@ -167,7 +167,7 @@ function _M.read_yaml_conf(apisix_home)
         profile.apisix_home = apisix_home .. "/"
     end
 
-    local local_conf_path = profile:yaml_path("config-default")
+    local local_conf_path = profile:yaml_path("config-default") --默认配置文件
     local default_conf_yaml, err = util.read_file(local_conf_path)
     if not default_conf_yaml then
         return nil, err
@@ -178,7 +178,7 @@ function _M.read_yaml_conf(apisix_home)
         return nil, "invalid config-default.yaml file"
     end
 
-    local_conf_path = profile:yaml_path("config")
+    local_conf_path = profile:yaml_path("config") -- config-apisixprofile 配置文件，用户自定义配置文件
     local user_conf_yaml, err = util.read_file(local_conf_path)
     if not user_conf_yaml then
         return nil, err
@@ -190,7 +190,7 @@ function _M.read_yaml_conf(apisix_home)
             is_empty_file = false
             break
         end
-    end
+    end -- 判断是否是空文件
 
     if not is_empty_file then
         local user_conf = yaml.parse(user_conf_yaml)
@@ -198,12 +198,12 @@ function _M.read_yaml_conf(apisix_home)
             return nil, "invalid config.yaml file"
         end
 
-        local ok, err = resolve_conf_var(user_conf)
+        local ok, err = resolve_conf_var(user_conf) -- 将user_conf用户自定义配置文件环境变量占位符替换为对应的值
         if not ok then
             return nil, err
         end
 
-        ok, err = merge_conf(default_conf, user_conf)
+        ok, err = merge_conf(default_conf, user_conf) -- 合并默认和用户自定义配置
         if not ok then
             return nil, err
         end
