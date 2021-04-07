@@ -62,7 +62,7 @@ version:    print the version of apisix
 ]])
 end
 
-
+-- 版本比较更合适
 local function check_version(cur_ver_s, need_ver_s)
     local cur_vers = util.split(cur_ver_s, [[.]])
     local need_vers = util.split(need_ver_s, [[.]])
@@ -293,7 +293,7 @@ local function init(env)
     if not yaml_conf then
         util.die("failed to read local yaml config of apisix: ", err, "\n")
     end
-
+    -- https://github.com/api7/jsonschema
     local validator = jsonschema.generate_validator(config_schema)
     local ok, err = validator(yaml_conf)
     if not ok then

@@ -38,6 +38,7 @@ local _M = {}
 -- Timeout for all I/O operations
 http.TIMEOUT = 3
 
+-- 解析版本号
 local function parse_semantic_version(ver)
     local errmsg = "invalid semantic version: " .. ver
 
@@ -70,7 +71,7 @@ local function parse_semantic_version(ver)
     }
 end
 
-
+-- 比较版本号
 local function compare_semantic_version(v1, v2)
     local ver1, err = parse_semantic_version(v1)
     if not ver1 then
@@ -93,7 +94,7 @@ local function compare_semantic_version(v1, v2)
     return ver1.patch < ver2.patch
 end
 
-
+-- 请求etcd
 local function request(url, yaml_conf)
     local response_body = {}
     local single_request = false

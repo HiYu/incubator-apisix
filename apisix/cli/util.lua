@@ -36,7 +36,7 @@ function _M.execute_cmd(cmd)
                     .. cmd .. ", error info: " .. err
     end
 
-    local data, err = t:read("*all")
+    local data, err = t:read("*all") --获取命令执行结果
     t:close()
 
     if err ~= nil then

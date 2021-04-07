@@ -15,6 +15,7 @@
 -- limitations under the License.
 --
 
+-- 一致性hash
 local core        = require("apisix.core")
 local resty_chash = require("resty.chash")
 local str_char    = string.char
@@ -69,6 +70,7 @@ function _M.new(up_nodes, upstream)
     local safe_limit = 0
     local servers, nodes = {}, {}
     for serv, weight in pairs(up_nodes) do
+        -- 是否存在问题？id部分只有ip
         local id = str_gsub(serv, ":", str_null)
 
         nodes_count = nodes_count + 1

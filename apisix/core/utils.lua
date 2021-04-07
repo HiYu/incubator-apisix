@@ -56,7 +56,7 @@ local _M = {
     parse_ipv6 = ipmatcher.parse_ipv6,
 }
 
-
+-- 获取随机数
 function _M.get_seed_from_urandom()
     local frandom, err = open("/dev/urandom", "rb")
     if not frandom then
@@ -77,7 +77,7 @@ function _M.get_seed_from_urandom()
     return seed
 end
 
-
+-- uri 分解
 function _M.split_uri(uri)
     return ngx_re.split(uri, "/")
 end
@@ -123,7 +123,7 @@ function _M.get_resolver(resolvers)
     return dns_resolvers
 end
 
-
+-- 从s的最右侧，查找ch终端首字母在s的位置，比如用于ip:port分离
 local function rfind_char(s, ch, idx)
     local b = str_byte(ch)
     for i = idx or #s, 1, -1 do

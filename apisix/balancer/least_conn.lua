@@ -16,7 +16,7 @@
 --
 
 local core = require("apisix.core")
-local binaryHeap = require("binaryheap")
+local binaryHeap = require("binaryheap") -- 堆实现 http://tieske.github.io/binaryheap.lua/
 local ipairs = ipairs
 local pairs = pairs
 
