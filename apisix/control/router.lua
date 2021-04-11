@@ -30,7 +30,7 @@ local get_method = ngx.req.get_method
 
 local _M = {}
 
-
+-- dismod = discovery modules,太糟糕的命名了
 local function format_dismod_uri(mod_name, uri)
     if core.string.has_prefix(uri, "/v1/") then
         return uri
