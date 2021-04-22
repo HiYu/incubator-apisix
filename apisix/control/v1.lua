@@ -27,7 +27,7 @@ local ngx_var = ngx.var
 
 local _M = {}
 
-
+-- 配置格式
 function _M.schema()
     local schema = {
         main = {

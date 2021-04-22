@@ -15,7 +15,7 @@
 -- limitations under the License.
 --
 local fetch_local_conf = require("apisix.core.config_local").local_conf
-local etcd             = require("resty.etcd")
+local etcd             = require("resty.etcd") --https://github.com/api7/lua-resty-etcd
 local clone_tab        = require("table.clone")
 local ipairs           = ipairs
 local string           = string
